@@ -44,16 +44,43 @@ function Square(props) {
       );
     }
   }
-  
+ class Clock extends React.Component { 
+   constructor(props){
+      super(props)
+      this.state = {
+        date: new Date(),
+
+      }
+   };
+
+    getTime(){ 
+        this.setState({
+          date: new Date(),
+        })
+
+    }
+    componentDidMount(){
+      this.timerID = setInterval(()=>this.getTime(),1000);
+    }
+    componentWillUnmount() {
+      clearInterval(this.timerID);
+    }
+    render(){
+
+      return (<div className="Clock"><h2>{this.state.date.toLocaleTimeString()}</h2></div>);
+    };
+
+  }
   class Game extends React.Component {
     constructor(props){
       super(props)
       this.state = {
-        history:  [{squares:Array(9).fill(null)}],
-        XisNext: true,
-        stepNumber: 0
+          history:  [{squares:Array(9).fill(null)}],
+          XisNext: true,
+          stepNumber: 0,
+        }
       };
-    }
+    
     handleClick(i){
       const history = this.state.history.slice(0, this.state.stepNumber + 1);
       const current = history[history.length -1]
@@ -73,19 +100,22 @@ function Square(props) {
           XisNext: x
         });
     }
+
+    
     render() {
       const history = this.state.history.slice(0, this.state.stepNumber + 1);
       const current = history[history.length -1]
       const winner = calcWinner(current.squares)
       const moves = history.map((step,move)=>{
-        const desc = move ? "go to move # " + move : "go to start"
-        return(
-          <li key={move}>
+      const desc = move ? "go to move # " + move : "go to start"
+      return(
+        <li key={move}>
              <button onClick={()=>this.jumpTo(move)}>{desc}</button>
             </li>
         );
       }); 
-     
+      
+      
       let status = ""
       if(winner){
          status = winner + " wins game!"
@@ -99,6 +129,7 @@ function Square(props) {
         }
 
       }
+
       return (
         <div className="game">
           <div className="game-board">
@@ -138,7 +169,10 @@ function Square(props) {
   // ========================================
   
   ReactDOM.render(
-    <Game />,
+   <Game />,
     document.getElementById('root')
   );
-  
+  ReactDOM.render(
+    <Clock />,
+     document.getElementById('clock')
+   );
